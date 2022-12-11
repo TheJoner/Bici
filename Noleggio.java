@@ -1,31 +1,32 @@
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Noleggio {
     //attributi
-    private Date dataInizio, dataFine;
+    private LocalDate dataInizio;
+    private LocalDate dataFine;
     private int targaBici;
     private int smartCard;
     private int daStazione;
     private int aStazione;
 
     //metodi
-    public Noleggio(Date dataOggi, int targaBici, int codiceCard, int daStazione) {
-        dataInizio = dataOggi;
+    public Noleggio(LocalDate dataInizio, int targaBici, int codiceCard, int daStazione) {
+        this.dataInizio = dataInizio;
         this.targaBici = targaBici;
         smartCard = codiceCard;
         this.daStazione = daStazione;
 
     }
 
-    public Date getDataInizio() {
+    public LocalDate getDataInizio() {
         return dataInizio;
     }
 
-    public Date getDataFine() {
+    public LocalDate getDataFine() {
         return dataFine;
     }
 
-    public void setDataFine(Date dataFine) {
+    public void setDataFine(LocalDate dataFine) {
         this.dataFine = dataFine;
     }
 

@@ -53,8 +53,8 @@ public class Stazione {
         bicicletteS[posizioneBici] = new Bici(targaBici);
     }
     
+    
     public void togliBici(int posizioneBici){
-
         bicicletteS[posizioneBici] = null;
     }
 

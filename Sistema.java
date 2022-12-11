@@ -1,4 +1,5 @@
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Scanner;
 
 public class Sistema {
     //attributi
@@ -9,11 +10,11 @@ public class Sistema {
     private int tB, tSM, tS, tN, tBPS;    //totali
     private int iSM = 0;                //indici
     private int iN = 0;                 //indici
-
+    private Scanner scan = new Scanner(System.in);
     //eccezioni
 
     //metodi
-    public Sistema(int tB, int tSM, int tS, int tN){
+    public Sistema(int tB, int tSM, int tS, int tN, int tBPS){
         this.tB = tB;
         biciclette = new Bici[tB];
         this.tSM = tSM;
@@ -22,7 +23,7 @@ public class Sistema {
         stazioni = new Stazione[tS];
         this.tN= tN;
         noleggi = new Noleggio[tN];
-
+        this.tBPS = tBPS;
     }
 
     //creo le biciclette
@@ -43,7 +44,7 @@ public class Sistema {
 
     //metto le Bici nelle stazioni e setto gli occupati
     public void mettiBiciInStazioni() {
-        for(int i = 0; i < tB; i++){        //ciclo per le stazioni
+        for(int i = 0; i < tBPS; i++){        //ciclo per le stazioni
             for(int o = 0; o < tS; o++){    //ciclo per le bici
                 if(biciclette[o]!=null){
                     biciclette[o] = null;
@@ -59,6 +60,9 @@ public class Sistema {
                 }
             }
             occupatiS = 0;
+            if(stazioni[o]==null)
+                break;
+            else
             stazioni[o]=stazioni[o].setOccupati(occupatiS);
         }
     }
@@ -75,9 +79,8 @@ public class Sistema {
         }
 
         smartCards[iSM] = new SmartCard(iSM, credito, nome, cognome);
-        iSM++;
-        
         String a = "Hai inserito la SmartCard di "+smartCards[iSM].getNominativo();
+        iSM++;
         System.out.println(a);
     }
     
@@ -105,22 +108,46 @@ public class Sistema {
     public void creaNoleggio(int targa, int codiceCard, int stazionePartenza){
         //eccezione se arrivi al massimo di Noleggi
         //eccezione se c'é la bici (if "-1") allora la bici non è nella stazionePartenza
-        
-        if(stazioni[stazionePartenza].eQuaLaBici(targa) == false){
-            //eccezione
-            //la bici non è in quella stazione
+        /*
+        try{
+            stazioni[stazionePartenza].togliBici(stazionePartenza);
+            Date dataInizio;
+            dataInizio = new Date();
+            noleggi[this.iN] = new Noleggio(dataInizio, targa, codiceCard, stazionePartenza);
+            this.iN++;
         }
-        
-        stazioni[stazionePartenza].togliBici(stazionePartenza);
-        Date dataInizio;
-        dataInizio = new Date();
-        noleggi[iN] = new Noleggio(dataInizio, targa, codiceCard, stazionePartenza);
-        iN++;
+        catch(NullPointerException cock){
+            int i = 0;
+            do{
+                System.out.println("Premi 0 se non vuoi fare niente");
+                System.out.println("Premi 1 se vuoi sovrascrivere");
+                i = Integer.parseInt(this.scan.nextLine());
+                if(i == 1)
+                this.iN = 0;
+            }while(i<=0 && i>=2);
+        }
+        */
+        if(this.iN >= tN){
+            int i = 0;
+            do{
+                System.out.println("Premi 0 se non vuoi fare niente");
+                System.out.println("Premi 1 se vuoi sovrascrivere");
+                i = Integer.parseInt(this.scan.nextLine());
+                if(i == 1)
+                this.iN = 0;
+            }while(i<=0 && i>=2);
+        }else{
+            stazioni[stazionePartenza].togliBici(stazioni[stazionePartenza].getPoisioneBici(targa));
+            LocalDate dataInizio;
+            dataInizio = LocalDate.now();
+            noleggi[this.iN] = new Noleggio(dataInizio, targa, codiceCard, stazionePartenza);
+            this.iN++;
+        }
     }
 
     public void fineNoleggio(Noleggio noleggioIniziato, int stazioneArrivo){
-        Date dataFine;
-        dataFine = new Date();
+        LocalDate dataFine;
+        dataFine = LocalDate.now();
         noleggioIniziato.setDataFine(dataFine);
         noleggioIniziato.setaStazione(stazioneArrivo);
     }
@@ -209,24 +236,33 @@ public class Sistema {
 
     //quanti Noleggi sono stati creati
     public int getiN() {
-        return iN;
+        return this.iN;
     }
+
 
     public String trovaBici(int targa){
         String posizioneBici = "La bici non esiste";
         for(int i = 0; i < tS; i++){
             for(int o = 0; o < tBPS; o++){
-                if(stazioni[i].eQuaLaBici(targa) == true){
-                    posizioneBici = "La bici di targa "+targa+" si trova nella stazione "+i;
-                    return posizioneBici;
+                if(stazioni[i]!= null){
+                    if(stazioni[i].eQuaLaBici(targa) == true){
+                        posizioneBici = "La bici di targa "+targa+" si trova nella stazione "+i;
+                        return posizioneBici;
+                    }
+                }else{
+                    break;
                 }
             }
         }
-        if(posizioneBici == "La bici non esiste"){
-            for(int i = 0; i < tN; i++){
+        
+        if(posizioneBici.equals(posizioneBici)){
+            for(int i = 0; i < this.iN; i++){
                 if(noleggi[i].getTargaBici() == targa){
+                    System.out.println(getNomSmartCard(noleggi[i].getSmartCard()));
                     posizioneBici = "La bici è noleggiata a "+getNomSmartCard(noleggi[i].getSmartCard());
+                    break;
                 }
+                System.out.println(noleggi[i].getTargaBici());
             }
         }
         return posizioneBici;

@@ -1,6 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-        Sistema comune = new Sistema(100, 100, 100, 100);
+        Sistema comune = new Sistema(100, 100, 10, 100, 10);
         comune.creaBici();                  //creo le bici da mettere nelle stazioni
         comune.creaStazioni();              //creo le stazioni
         comune.mettiBiciInStazioni();       //metto le bici nele stazioni (quelle che posso)
@@ -18,8 +18,8 @@ public class Main {
         comune.getNomSmartCard(2);
         
         //prendo una bici
-        comune.creaNoleggio(0, 1, 2);
-        System.out.println(comune.trovaBici(0));
+        comune.creaNoleggio(0, 1, 0);
+        comune.trovaBici(0);
         
     }
 }
